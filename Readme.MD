@@ -88,3 +88,43 @@ Docker hace que los procesos adentro de un contenedor este aislados del resto de
 Cada contenedor tiene un ID único, también tiene un nombre.
 
 # Comprendiendo el estado de Docker
+
+Saber que contenedores estan correindo en el deamon de docker 
+
+```
+    docker ps
+```
+
+Ver todos los contenedores de docker , nota: cuando realizamos un docker run , estamos creando un nuevo contenedor y lo ejecuta
+
+```
+    docker ps -a 
+```
+
+Para ver la información de un contenedor 
+
+```
+    docker 
+```
+
+
+ponerle un nombre a un contenedor con la opcion --name
+y renombrar un contenedor 
+
+```
+    docker run --name hola1 hello-world
+
+    docker rename hola1 nombre_formal
+```
+
+Eliminar los contenedores que ya no utilizamos, 
+prune nos elimina todos los contenedores
+
+```
+    docker rm id/nombre_contenedor
+    docker container prune
+```
+
+
+
+
