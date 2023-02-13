@@ -104,7 +104,7 @@ Ver todos los contenedores de docker , nota: cuando realizamos un docker run , e
 Para ver la información de un contenedor 
 
 ```
-    docker 
+    docker inspect id/nombre
 ```
 
 
@@ -118,12 +118,134 @@ y renombrar un contenedor
 ```
 
 Eliminar los contenedores que ya no utilizamos, 
-prune nos elimina todos los contenedores
+prune nos elimina todos los contenedores que estan parados
 
 ```
     docker rm id/nombre_contenedor
     docker container prune
 ```
+
+
+# El modo interactivo
+
+
+```
+    docker run ubuntu
+    docker run -it ubuntu
+```
+
+# Ciclo de vida de un contenedor (segundo plano)
+
+Cuando un proceso falla, el contenedor se detiene
+
+El modo detach , el contenedor corre en segundo plano
+
+```
+    docker run --name hey -d ubuntu tail -f /dev/null
+```
+
+Entrar al contenedor con el comando exec
+
+```
+    docker exec -it id/contenedor shell
+```
+
+Dentro del contenedor de docker podemos ejecutar el siguinte comando
+
+```
+    ps -aux
+```
+
+Otra forma de parar los contenedores 
+
+```
+    docker inspect --format '{{.State.Pid}}' id/contenedor
+    
+    kill numero_pid
+```
+
+# Exponiendo contenedores (Puertos)
+
+Para enfocarnos en este ejemplo utilizamos nginx
+la bandera -p es de publish, que es la que expone el pueto del contenedor
+del lado izquierdo es la de nuetra maquina y el lado derecho es la del contenedor
+**-p puertoMáquna:puertoContenedor**
+
+```
+    docker run -d --name proxy -p 8080:80 nginx
+```
+
+![](https://i.imgur.com/Xat2Lst.png)
+
+Ver los logs del contenedor
+
+```
+    docker logs -f proxy
+```
+
+
+#  Bind mounts
+
+Utilizaremos mongodb 
+
+```
+    docker run -d --name db mongo
+```
+
+dentro del contenedor utilizamos
+
+```
+    $ mongogs
+    $ show dbs
+    $ use banco
+    $ db.users.insert({"nombre":"carlos"})
+    $ db.users.find()
+```
+
+Cuando salimos del contenedor nos damos cuenta que no guardo informacion
+lo que hacemos es montar un bind mount
+
+creamos una carpeta y despues ejecutamos el sig. comando
+
+```
+    docker run -d --name db -v /home/garcia/Contenedores/dockerdata/mongodata:/data/db mongo
+```
+
+# Volúmenes
+
+La diferencia con bind mount es que uno requiere una carpeta fuera del contenedor
+y los volumenes son respaldos que maneja docker virtualmente
+
+
+Listar los volumenes
+
+```
+    docker volume ls
+```
+
+Crear volumenes
+
+```
+    docker volume create nombre_volumen
+```
+
+Montar los volumenes
+
+tiene dos parametros mount , 
+
+- src: el el volumen que se le va a montar
+- dst: la ruta del contenedor donde se va montar ese volumen 
+
+```
+    docker run --name  db -d --mount src=dbdata,dst=/data/db mongo
+```
+
+Inspeccionar los volumenes
+
+```
+    docker inspect nombre_volumen
+```
+
 
 
 
