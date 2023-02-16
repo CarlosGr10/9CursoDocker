@@ -246,7 +246,29 @@ Inspeccionar los volumenes
     docker inspect nombre_volumen
 ```
 
+# Insertar y extraer archivos de un contenedor
 
+### Agregando unn archivo de local hacia el servidor
 
+Creamos un contenedor y creamos un directorio
+
+```
+    docker run -it --name test ubuntu
+    docker exec -it test bash
+    mkdir testing
+```
+
+Creamos un archivo , y lo copiamos dentro del contenedor
+
+```
+    touch prueba.txt
+    docker cp prueba.txt test:/testing/tes.txt
+```
+
+### Obteniendo un directorio del contenedor
+
+```
+    docker cp test:/testing localtesting
+```
 
 
