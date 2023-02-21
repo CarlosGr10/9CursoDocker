@@ -271,4 +271,67 @@ Creamos un archivo , y lo copiamos dentro del contenedor
     docker cp test:/testing localtesting
 ```
 
+# Conceptos fundamentales de Docker: imágenes
+
+Las imagenes son como plantillas o moldes donde hacemos la construccion de contenedores
+estas tienen blibliotecas y librerias
+
+Podemos bajar diferentes imagenes de ubuntu en Dockerhub
+
+```Dockerfile
+    FROM ubuntu:latest
+
+    RUN touch /usr/src/hola-docker.txt
+
+    RUN chmod 777 /opt
+
+    RUN mkdir /opt/backup1
+
+    RUN mkdir /opt/backup2
+
+    RUN mkdir /opt/app
+```
+
+Comando para construir nuestras imagenes
+```
+    docker build -t ubuntu:lubuntu .
+```
+
+Creamos carpetas para montar nuestros volumenes
+```
+    docker run -it -d -v /home/garcia/Contenedores/imagenes/backup/b1:/opt/backup1 -v /home/garcia/Contenedores/imagenes/backup/b2:/opt/backup2 -v /home/garcia/Contenedores/imagenes/backup/b3:/opt/app --name cool ubuntu:lubuntu
+```
+
+# El sistema de capas
+
+El dockerfile sus capas son las lineas que ejecutamos 
+
+```
+    docker history ubuntu:lubuntu
+```
+
+para ver los layers de la imagenes podemos utiliar docker dive
+
+
+# Usando Docker para desarrollar aplicaciones
+
+```
+    git clone https://github.com/platzi/docker
+
+    docker build -t platziapp .
+
+    docker run --rm -p 3000:3000 platziapp (creo el contenedor y cuando se detenga se borra, lo publica el puerto 3000)
+```
+
+
+
+
+
+
+
+
+
+
+
+
 
