@@ -310,7 +310,13 @@ El dockerfile sus capas son las lineas que ejecutamos
     docker history ubuntu:lubuntu
 ```
 
-para ver los layers de la imagenes podemos utiliar docker dive
+La importancia de entender el sistema de capas consiste en la optimización de la construcción del contenedor para reducir espacio ya que cada comando en el dockerfile crea una capa extra de código en la imagen.
+
+Agregando Capas
+
+Con docker commit se crea una nueva imagen con una capa adicional que modifica la capa base.
+
+para ver los layers de la imagenes podemos utiliar docker ![dive](https://github.com/wagoodman/dive)
 
 
 # Usando Docker para desarrollar aplicaciones
@@ -320,13 +326,40 @@ para ver los layers de la imagenes podemos utiliar docker dive
 
     docker build -t platziapp .
 
-    docker run --rm -p 3000:3000 platziapp (creo el contenedor y cuando se detenga se borra, lo publica el puerto 3000)
+    docker run --rm -p 3000:3000 platziapp 
+    
+    (creo el contenedor y cuando se detenga se borra, lo publica el puerto 3000)
+    -- rm es una bandera para ejecutar un contenedor , pero cuando se apage lo elimina
 ```
 
+Instrucciones del Dockerfile
+
+- FROM -> La imagen de referencia que vamos a montar
+
+- COPY -> Copia los archivos de nuestro local hacia el contenedor
+
+- WORKDIR -> Es el punto donde va a trabajar los comandos del dockerfile
+
+- RUN -> Es ajecutar un comando
+
+- EXPOSE -> Se pueda acceder a este cotenedor desde este puerto
+
+- CMD -> Definir el comando predeterminado que se ejecutará cuando se inicie un contenedor a partir de la imagen Docker construida
 
 
+# Aprovechando el caché de capas para estructurar correctamente tus imágenes
 
+Layer cache -> no vuelve a costruir sobre algo nuevo
 
+Si cambiamos la base (FROM) es no entra el layer cache ya que instala todo de nuevo
+
+Elegir bien los archivos a copiar hacia el contenedor
+
+Para optimizar el Dockerfile y no estar ejecutando build constantemente, lo ejecutamos como un bind mount
+
+```
+    docker run --rm -p 3000:3000 -v $(pwd)/index.js:/usr/src/index.js platziapp
+```
 
 
 
