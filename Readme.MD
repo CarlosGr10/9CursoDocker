@@ -316,7 +316,7 @@ Agregando Capas
 
 Con docker commit se crea una nueva imagen con una capa adicional que modifica la capa base.
 
-para ver los layers de la imagenes podemos utiliar docker ![dive](https://github.com/wagoodman/dive)
+para ver los layers de la imagenes podemos utiliar docker [dive](https://github.com/wagoodman/dive)
 
 
 # Usando Docker para desarrollar aplicaciones
