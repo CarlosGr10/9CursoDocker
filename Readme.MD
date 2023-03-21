@@ -362,6 +362,214 @@ Para optimizar el Dockerfile y no estar ejecutando build constantemente, lo ejec
 ```
 
 
+# Docker networking: colaboración entre contenedores
+
+Para listar las redes que tenemos en docker 
+
+```
+    docker network ls
+```
+bridge - Para que tenga accesos a otras versiones de docker
+host - Red real de la maquina
+none - Un contenedor no tenga un acceso a red 
+
+
+Crear una red en docker, el parametro attachable es para permitir que otros contenedores se conecten a la red
+
+```
+    docker network create --attachable platzinet
+```
+
+Conectar contenedores a una red
+
+```
+    docker run -d --name db mongo
+
+    docker network connect platzinet db
+
+    docker run -d --name app -p 3000:3000 --env MONGO_URL=mongodb://db:27017/test platziapp
+
+    docker network connect platzinet app
+```
+
+Inspeccionar la red 
+Con esto vemos que contenedores estan conectadas a la red
+
+```
+    docker network inspect platzinet
+```
+
+# Docker Compose: la herramienta todo en uno
+
+```yml
+version: "3.8"
+
+services:
+  app:
+    image: platziapp
+    environment:
+      MONGO_URL: "mongodb://db:27017/test"
+    depends_on:
+      - db
+    ports:
+      - "3000:3000"
+
+  db:
+    image: mongo          
+```
+
+Correr el docker-compose 
+
+```
+    docker compose up -d
+```
+
+# Subcomandos de Docker Compose
+
+listar los contenedores
+
+```
+    docker compose ps
+```
+
+Ver los logs del docker compose 
+
+```
+    docker compose logs
+```
+
+tambien lo podemos realizar a tiempo real y especificando el nombre del contenedor 
+
+```
+    docker compose logs -f  app
+```
+
+Entrando dentro del contenedor
+
+```
+    docker compose exec app bash
+```
+
+Destruir la red y los contenedores
+
+```
+    docker compose down
+```
+
+# Docker Compose como herramienta de desarrollo
+
+Para los entornos de desarrollo es importante tener bien construidos los Dockerfile
+
+En el docker-compose.yml utilizamos build para nuestra imagen
+
+```yml
+version: "3.8"
+
+services:
+  app:
+    build: . # Es donde tenemos nuestro dockerfile (root/raiz)
+    environment:
+      MONGO_URL: "mongodb://db:27017/test"
+    depends_on:
+      - db
+    ports:
+      - "3000:3000"
+
+  db:
+    image: mongo
+```
+
+Primero contruimos 
+
+```
+    docker compose build
+```
+
+y despues subimos nuestros servicios
+
+```
+    docker compose up -d
+```
+
+Nota: Si hacemos un cambio en el codigo podemos construir solo una parte del docker compose
+
+```
+    docker compose build app
+```
+
+Tambien podemos realizar los bindmounts en el docker compose
+
+```yml
+version: "3.8"
+
+services:
+  app:
+    build: .
+    environment:
+      MONGO_URL: "mongodb://db:27017/test"
+    depends_on:
+      - db
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/usr/src # Montamos los archivos al contenedor
+      - /usr/src/node_modules # Ignorar la ruta 
+    command: npx nodemon index.js # comando para estar refrescando el codigo
+
+
+  db:
+    image: mongo
+```
+
+
+# Compose en equipo: override
+
+Creamos un docker compose
+
+```
+    touch docker-compose.override.yml
+```
+Lo editamos y agregamos las sig. lineas
+
+```yml
+version: "3.8"
+
+services:
+    app:
+      build: .
+      environment:
+        UNA_VARIABLE: "HOLA SOY UNA VARIABLE"
+```
+
+Y nuestro docker compose normal queda de la sig. manera
+
+```yml
+version: "3.8"
+
+services:
+  app:
+    image: platziapp
+    environment:
+      MONGO_URL: "mongodb://db:27017/test"
+    depends_on:
+      - db
+    ports:
+      - "3000-30001:3000" # Definimos un rango de puertos 
+
+
+  db:
+    image: mongo          
+```
+
+comando '$ env' dentro del contenedor, para que veamos que se combinaron los compose
+Esto realiza un merge de docker-compose, y es recomendable utilizarlo en un .gitignore
+
+Cuando ponemos un rango de puertos podemos agregar varios contenedores 
+
+```
+    docker compose up -d --scale app=2
+```
+
 
 
 
